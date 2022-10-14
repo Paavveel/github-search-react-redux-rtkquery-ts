@@ -4,11 +4,14 @@ import { useDebounce } from '../../hooks';
 
 export const HomePage = () => {
   const [search, setSearch] = useState('');
+  const [searchDropdown, setSearchDropdown] = useState(false);
   const debouncedSearch = useDebounce(search);
-  const { isLoading, isError, data } = useSearchUsersQuery('pavel');
+  const { isLoading, isError, data } = useSearchUsersQuery(debouncedSearch, {
+    skip: debouncedSearch.length < 3,
+  });
 
   useEffect(() => {
-    console.log(debouncedSearch);
+    setSearchDropdown(debouncedSearch.length > 3);
   }, [debouncedSearch]);
 
   return (
@@ -24,10 +27,19 @@ export const HomePage = () => {
           placeholder='Search for Github username...'
           onChange={e => setSearch(e.target.value)}
         />
-        <div className='absolute top=[42px] left-0 right-0 max-h-[200px] shadow-md bg-white'>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Accusamus,
-          quasi!
-        </div>
+        {searchDropdown && (
+          <ul className='list-none absolute top=[42px] left-0 right-0 max-h-[200px] overflow-y-scroll shadow-md bg-white'>
+            {isLoading && <p className='text-center'>Loading...</p>}
+            {data?.items.map(user => (
+              <li
+                key={user.id}
+                className='py-2 px-4 hover:bg-gray-500 hover:text-white transition-colors cursor-pointer'
+              >
+                {user.login}
+              </li>
+            ))}
+          </ul>
+        )}
       </div>
     </div>
   );

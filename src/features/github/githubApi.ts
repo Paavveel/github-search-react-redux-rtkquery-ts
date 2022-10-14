@@ -33,6 +33,7 @@ export const githubApi = createApi({
   baseQuery: fetchBaseQuery({
     baseUrl: 'https://api.github.com/',
   }),
+  refetchOnFocus: true,
   endpoints: builder => ({
     searchUsers: builder.query<ServerResponse<IUser>, string>({
       query: search => ({
