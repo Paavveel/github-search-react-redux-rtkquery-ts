@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 import { useSearchUsersQuery } from '../../features/github/githubApi';
+import { useDebounce } from '../../hooks';
 
 export const HomePage = () => {
   const [search, setSearch] = useState('');
+  const debouncedSearch = useDebounce(search);
   const { isLoading, isError, data } = useSearchUsersQuery('pavel');
 
   useEffect(() => {
-    console.log(search);
-  }, [search]);
+    console.log(debouncedSearch);
+  }, [debouncedSearch]);
 
   return (
     <div className='flex justify-center pt-10 mx-auto'>
