@@ -1,14 +1,24 @@
-import { Route, Routes } from 'react-router-dom';
-import { FavoritesPage } from './pages/FavoritesPage/FavoritesPage';
-import { HomePage } from './pages/HomePage/HomePage';
+import {
+  createBrowserRouter,
+  createRoutesFromElements,
+  Route,
+  RouterProvider,
+} from 'react-router-dom';
+import { FavoritesPage, HomePage, Layout } from './pages';
+
+const router = createBrowserRouter(
+  createRoutesFromElements(
+    <Route path='/' element={<Layout />}>
+      <Route index element={<HomePage />} />
+      <Route path='favorites' element={<FavoritesPage />} />
+    </Route>
+  )
+);
 
 function App() {
   return (
     <div className='App'>
-      <Routes>
-        <Route path='/' element={<HomePage />} />
-        <Route path='favorites' element={<FavoritesPage />} />
-      </Routes>
+      <RouterProvider router={router} />
     </div>
   );
 }
