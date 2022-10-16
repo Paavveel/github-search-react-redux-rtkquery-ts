@@ -5,8 +5,10 @@ export interface GithubState {
   favorites: string[];
 }
 
+const LS_FAV_REPO = 'fav';
+
 const initialState: GithubState = {
-  favorites: [],
+  favorites: JSON.parse(localStorage.getItem(LS_FAV_REPO) ?? '[]'),
 };
 
 export const githubSlice = createSlice({
@@ -15,9 +17,11 @@ export const githubSlice = createSlice({
   reducers: {
     addFavorite: (state, action: PayloadAction<string>) => {
       state.favorites.push(action.payload);
+      localStorage.setItem(LS_FAV_REPO, JSON.stringify(state.favorites));
     },
     removeFavorite: (state, action: PayloadAction<string>) => {
       state.favorites = state.favorites.filter((f) => f !== action.payload);
+      localStorage.setItem(LS_FAV_REPO, JSON.stringify(state.favorites));
     },
   },
 });
