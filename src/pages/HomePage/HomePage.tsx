@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useSearchUsersQuery } from '../../features/github/githubApi';
+import { RepoCard } from '../../components';
+import {
+  useLazyGetUserReposQuery,
+  useSearchUsersQuery,
+} from '../../features/github/githubApi';
 import { useDebounce } from '../../hooks';
 
 export const HomePage = () => {
@@ -9,6 +13,13 @@ export const HomePage = () => {
   const { isLoading, isError, data } = useSearchUsersQuery(debouncedSearch, {
     skip: debouncedSearch.length < 3,
   });
+  const [fetchRepos, { isLoading: areReposLoading, data: repos }] =
+    useLazyGetUserReposQuery();
+
+  const handleClick = (username: string) => {
+    fetchRepos(username);
+    setSearchDropdown(false);
+  };
 
   useEffect(() => {
     setSearchDropdown(debouncedSearch.length > 3);
@@ -25,21 +36,30 @@ export const HomePage = () => {
           type='text'
           className='border py-2 px-4 w-full h-[42px] mb-2'
           placeholder='Search for Github username...'
-          onChange={e => setSearch(e.target.value)}
+          onChange={(e) => setSearch(e.target.value)}
         />
         {searchDropdown && (
           <ul className='list-none absolute top=[42px] left-0 right-0 max-h-[200px] overflow-y-scroll shadow-md bg-white'>
             {isLoading && <p className='text-center'>Loading...</p>}
-            {data?.items.map(user => (
+            {data?.items.map((user) => (
               <li
                 key={user.id}
                 className='py-2 px-4 hover:bg-gray-500 hover:text-white transition-colors cursor-pointer'
+                onClick={() => handleClick(user.login)}
               >
                 {user.login}
               </li>
             ))}
           </ul>
         )}
+        <div className='container'>
+          {areReposLoading && (
+            <p className='text-center'>Repos are loading...</p>
+          )}
+          {repos?.map((repo) => (
+            <RepoCard key={repo.id} repo={repo} />
+          ))}
+        </div>
       </div>
     </div>
   );
