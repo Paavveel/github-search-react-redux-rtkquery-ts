@@ -1,16 +1,28 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../app/store';
 
-export interface CounterState {}
+export interface GithubState {
+  favorites: string[];
+}
 
-const initialState: CounterState = {};
+const initialState: GithubState = {
+  favorites: [],
+};
 
-export const counterSlice = createSlice({
-  name: 'counter',
+export const githubSlice = createSlice({
+  name: 'github',
   initialState,
-  reducers: {},
+  reducers: {
+    addFavorite: (state, action: PayloadAction<string>) => {
+      state.favorites.push(action.payload);
+    },
+    removeFavorite: (state, action: PayloadAction<string>) => {
+      state.favorites = state.favorites.filter((f) => f !== action.payload);
+    },
+  },
 });
 
-export const selectCount = (state: RootState) => state;
+export const selectFavorites = (state: RootState) => state.github.favorites;
+export const { addFavorite, removeFavorite } = githubSlice.actions;
 
-export default counterSlice.reducer;
+export default githubSlice.reducer;
